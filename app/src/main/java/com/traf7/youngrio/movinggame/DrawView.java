@@ -16,8 +16,10 @@ import androidx.annotation.Nullable;
 
     public class DrawView extends View {
         Paint paint = new Paint();
-        Sprite sprite = new Sprite();
-        Sprite foodSprite, badSprite;
+        Sprite user_sprite = new Sprite( "bluejeans");
+        Sprite badSprite = new Sprite( "chibi1");
+        Sprite foodSprite = new Sprite( "health");
+//        Sprite foodSprite;
 
         public DrawView(Context context, @Nullable AttributeSet attrs)
         {
@@ -29,12 +31,14 @@ import androidx.annotation.Nullable;
         {
             super.onLayout(changed, left, top, right, bottom);
             //note, at this point, getWidth() and getHeight() will have access the the dimensions
-            foodSprite = generateSprite();
-            badSprite = generateSprite();
+            foodSprite = generateSprite( "health");
+            badSprite = generateSprite( "chibi1");
             badSprite.setColor(Color.RED);
-            badSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.thwomp));
-            sprite.grow(100);
-            sprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.bluejeans));
+            badSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.chibi1));
+            user_sprite.grow(100);
+            user_sprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.bluejeans));
+            foodSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.health));
+//            badSprite.grow(1000);
         }
 
         @Override
@@ -45,25 +49,29 @@ import androidx.annotation.Nullable;
             canvas.drawRect(getLeft(),0,getRight(),getBottom(),paint);//paint background gray
             paint.setColor(Color.RED);//set paint to red
             //sprite updates itself
-            sprite.update(canvas);
+            user_sprite.update(canvas);
             foodSprite.update(canvas);
             badSprite.update(canvas);
-            if(RectF.intersects(sprite, foodSprite)){
-                foodSprite=generateSprite();
-                sprite.grow(10);
+            if(RectF.intersects(user_sprite, foodSprite)){
+                foodSprite=generateSprite( "health");
+                foodSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.health));
+                user_sprite.grow(10);
             }
-            if(RectF.intersects(sprite, badSprite)){
-                badSprite=generateSprite();
-                badSprite.setColor(Color.RED);
-                sprite.grow(-5);
+            if(RectF.intersects(user_sprite, badSprite)){
+                badSprite=generateSprite( "chibi1");
+//                badSprite.setColor(Color.RED);
+                badSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.chibi1));
+                user_sprite.grow(-5);
             }
             if(RectF.intersects(foodSprite, badSprite)){
                 foodSprite.grow((int)(-foodSprite.width()*.1));//shrink food
-                badSprite=generateSprite();//recreate badSprite
-                badSprite.setColor(Color.GREEN);
+                badSprite=generateSprite( "chibi1");//recreate badSprite
+                badSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.chibi1));
+
+//                badSprite.setColor(Color.GREEN);
             }
             //sprite draws itself
-            sprite.draw(canvas);
+            user_sprite.draw(canvas);
             foodSprite.draw(canvas);
             badSprite.draw(canvas);
             invalidate();  //redraws screen, invokes onDraw()
@@ -73,14 +81,22 @@ import androidx.annotation.Nullable;
             float y = (float)(Math.random()*(getHeight()-.1*getHeight()));
             int dX = (int)(Math.random()*11-5);
             int dY = (int)(Math.random()*11-5);
-            return new Sprite(x,y,x+.1f*getWidth(),y+.1f*getWidth(),dX,dY,Color.MAGENTA);
+            return new Sprite(x,y,x+.1f*getWidth(),y+.1f*getWidth(),dX,dY,Color.MAGENTA );
+        }
+
+        private Sprite generateSprite( String string ) {
+            float x = (float) (Math.random() * (getWidth() - .1 * getWidth()));
+            float y = (float) (Math.random() * (getHeight() - .1 * getHeight()));
+            int dX = (int) (Math.random() * 11 - 5);
+            int dY = (int) (Math.random() * 11 - 5);
+            return new Sprite(x, y, x + .1f * getWidth(), y + .1f * getWidth(), dX, dY, Color.MAGENTA, string );
         }
 
         @Override
         public boolean onTouchEvent(MotionEvent event) {
             if(event.getAction()==MotionEvent.ACTION_DOWN){
                 if(badSprite.contains(event.getX(),event.getY())){
-                    badSprite=generateSprite();
+                    badSprite=generateSprite( "chibi1");
                     badSprite.setColor(Color.GREEN);
                 }
             }

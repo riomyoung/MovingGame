@@ -8,11 +8,16 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 
 class Sprite extends RectF {
-    private static final int BMP_COLUMNS = 4;
-    private static final int BMP_ROWS = 4;
+    private static final int BLUEJEANS_COLUMNS = 4;
+    private static final int BLUEJEANS_ROWS = 4;
+    private static final int CHIBI_COLUMNS = 3;
+    private static final int CHIBI_ROWS = 4;
+    private static final int HEALTH_COLUMNS = 1;
+    private static final int HEALTH_ROWS = 1;
     private static final int DOWN=0, LEFT=1, RIGHT=2, UP=3;
     private int dX, dY, color;
     private Bitmap bitmap;
+    private String picture;
     private int currentFrame=0, iconWidth, iconHeight, animationDelay=20;
 
     public Sprite()
@@ -38,6 +43,21 @@ class Sprite extends RectF {
         this.color = color;
     }
 
+    public Sprite(float left, float top, float right, float bottom, int dX, int dY, int color, String string )
+    {
+        super(left, top, right, bottom);
+        picture = string;
+        this.dX = dX;
+        this.dY = dY;
+        this.color = color;
+    }
+
+    public Sprite( String string )
+    {
+        this(1,2, Color.RED);
+        picture = string;
+    }
+
 
     public void update(Canvas canvas){
         if ( left + dX < 0 || right + dX > canvas.getWidth())//if next step hits boundary
@@ -59,8 +79,26 @@ class Sprite extends RectF {
 
         if ( animationDelay-- < 0 ) //increment to next sprite image after delay
         {
-            currentFrame = ++currentFrame % BMP_COLUMNS;//cycles current image with boundary proteciton
-            animationDelay = 20;//arbitrary delay before cycling to next image
+            if (picture != null )
+            {
+                if ( picture.equals( "chibi1" ) )
+                {
+                    currentFrame = ++currentFrame % CHIBI_COLUMNS;//cycles current image with boundary proteciton
+                    animationDelay = 20;//arbitrary delay before cycling to next image
+                }
+                if ( picture.equals( "bluejeans" ))
+                {
+                    currentFrame = ++currentFrame % BLUEJEANS_COLUMNS;//cycles current image with boundary proteciton
+                    animationDelay = 20;//arbitrary delay before cycling to next image
+                }
+                if ( picture.equals( "health" ))
+                {
+                    currentFrame = ++currentFrame % HEALTH_COLUMNS;//cycles current image with boundary proteciton
+                    animationDelay = 20;//arbitrary delay before cycling to next image
+                }
+            }
+
+
         }
     }
 
@@ -71,15 +109,39 @@ class Sprite extends RectF {
             paint.setColor(color);//sets its color
             canvas.drawCircle(centerX(), centerY(), width() / 2, paint);//draws circle
         }
-        else
+        else if ( picture != null )
         {
-            iconWidth = bitmap.getWidth() / BMP_COLUMNS;//calculate width of 1 image
-            iconHeight = bitmap.getHeight() / BMP_ROWS; //calculate height of 1 image
-            int srcX = currentFrame * iconWidth;       //set x of source rectangle inside of bitmap based on current frame
-            int srcY = getAnimationRow() * iconHeight; //set y to row of bitmap based on direction
-            Rect src = new Rect(srcX, srcY, srcX + iconWidth, srcY + iconHeight);  //defines the rectangle inside of heroBmp to displayed
-            canvas.drawBitmap(bitmap,src, this,null); //draw an image
+            if ( picture.equals( "bluejeans") )
+            {
+                iconWidth = bitmap.getWidth() / BLUEJEANS_COLUMNS;//calculate width of 1 image
+                iconHeight = bitmap.getHeight() / BLUEJEANS_ROWS; //calculate height of 1 image
+                int srcX = currentFrame * iconWidth;       //set x of source rectangle inside of bitmap based on current frame
+                int srcY = getAnimationRow() * iconHeight; //set y to row of bitmap based on direction
+                Rect src = new Rect(srcX, srcY, srcX + iconWidth, srcY + iconHeight);  //defines the rectangle inside of heroBmp to displayed
+                canvas.drawBitmap(bitmap,src, this,null); //draw an image
+            }
+            if ( picture.equals( "chibi1") )
+            {
+                System.out.println( "CHIBI1 PICTURE");
+                iconWidth = bitmap.getWidth() / CHIBI_COLUMNS;//calculate width of 1 image
+                iconHeight = bitmap.getHeight() / CHIBI_ROWS; //calculate height of 1 image
+                int srcX = currentFrame * iconWidth;       //set x of source rectangle inside of bitmap based on current frame
+                int srcY = getAnimationRow() * iconHeight; //set y to row of bitmap based on direction
+                Rect src = new Rect(srcX, srcY, srcX + iconWidth, srcY + iconHeight);  //defines the rectangle inside of heroBmp to displayed
+                canvas.drawBitmap(bitmap,src, this,null); //draw an image
+            }
+            if ( picture.equals( "health") )
+            {
+                System.out.println( "health");
+                iconWidth = bitmap.getWidth() / HEALTH_COLUMNS;//calculate width of 1 image
+                iconHeight = bitmap.getHeight() / HEALTH_ROWS; //calculate height of 1 image
+                int srcX = currentFrame * iconWidth;       //set x of source rectangle inside of bitmap based on current frame
+                int srcY = getAnimationRow() * iconHeight; //set y to row of bitmap based on direction
+                Rect src = new Rect(srcX, srcY, srcX + iconWidth, srcY + iconHeight);  //defines the rectangle inside of heroBmp to displayed
+                canvas.drawBitmap(bitmap,src, this,null); //draw an image
+            }
         }
+
     }
 
     private int getAnimationRow() {

@@ -18,26 +18,26 @@ public class MainActivity extends AppCompatActivity {
 
     public void moveLeft(View view)
     {
-        drawView.sprite.setdX(-3);//set horizontal speed to move left
-        drawView.sprite.setdY(0);
+        drawView.user_sprite.setdX(-3);//set horizontal speed to move left
+        drawView.user_sprite.setdY(0);
     }
 
     public void moveRight(View view)
     {
-        drawView.sprite.setdX(3);//set horizontal speed to move right
-        drawView.sprite.setdY(0);
+        drawView.user_sprite.setdX(3);//set horizontal speed to move right
+        drawView.user_sprite.setdY(0);
     }
 
     public void moveUp(View view)
     {
-        drawView.sprite.setdY(-3);//set vertical speed to move up
-        drawView.sprite.setdX(0);
+        drawView.user_sprite.setdY(-3);//set vertical speed to move up
+        drawView.user_sprite.setdX(0);
     }
 
     public void moveDown(View view)
     {
-        drawView.sprite.setdY(3);//set vertical speed to move down
-        drawView.sprite.setdX(0);
+        drawView.user_sprite.setdY(3);//set vertical speed to move down
+        drawView.user_sprite.setdX(0);
     }
 
 
