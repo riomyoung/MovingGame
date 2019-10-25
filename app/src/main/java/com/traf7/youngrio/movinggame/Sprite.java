@@ -10,10 +10,10 @@ import android.graphics.RectF;
 class Sprite extends RectF {
     private static final int BLUEJEANS_COLUMNS = 4;
     private static final int BLUEJEANS_ROWS = 4;
-    private static final int CHIBI_COLUMNS = 3;
-    private static final int CHIBI_ROWS = 4;
-    private static final int HEALTH_COLUMNS = 1;
-    private static final int HEALTH_ROWS = 1;
+    private static final int BULLY_COLUMNS = 4;
+    private static final int BULLY_ROWS = 4;
+    private static final int HEALTH_COLUMNS = 3;
+    private static final int HEALTH_ROWS = 4;
     private static final int DOWN=0, LEFT=1, RIGHT=2, UP=3;
     private int dX, dY, color;
     private Bitmap bitmap;
@@ -32,7 +32,7 @@ class Sprite extends RectF {
 
     public Sprite(float left, float top, float right, float bottom)
     {
-        this(left, top, right, bottom,1,2,Color.RED);
+        this(left, top, right, bottom,(int) Math.random()*5+1,(int) Math.random()*5+1,Color.RED);
     }
 
     public Sprite(float left, float top, float right, float bottom, int dX, int dY, int color)
@@ -81,9 +81,9 @@ class Sprite extends RectF {
         {
             if (picture != null )
             {
-                if ( picture.equals( "chibi1" ) )
+                if ( picture.equals( "bully" ) )
                 {
-                    currentFrame = ++currentFrame % CHIBI_COLUMNS;//cycles current image with boundary proteciton
+                    currentFrame = ++currentFrame % BULLY_COLUMNS;//cycles current image with boundary proteciton
                     animationDelay = 20;//arbitrary delay before cycling to next image
                 }
                 if ( picture.equals( "bluejeans" ))
@@ -120,11 +120,11 @@ class Sprite extends RectF {
                 Rect src = new Rect(srcX, srcY, srcX + iconWidth, srcY + iconHeight);  //defines the rectangle inside of heroBmp to displayed
                 canvas.drawBitmap(bitmap,src, this,null); //draw an image
             }
-            if ( picture.equals( "chibi1") )
+            if ( picture.equals( "bully") )
             {
                 System.out.println( "CHIBI1 PICTURE");
-                iconWidth = bitmap.getWidth() / CHIBI_COLUMNS;//calculate width of 1 image
-                iconHeight = bitmap.getHeight() / CHIBI_ROWS; //calculate height of 1 image
+                iconWidth = bitmap.getWidth() / BULLY_COLUMNS;//calculate width of 1 image
+                iconHeight = bitmap.getHeight() / BULLY_ROWS; //calculate height of 1 image
                 int srcX = currentFrame * iconWidth;       //set x of source rectangle inside of bitmap based on current frame
                 int srcY = getAnimationRow() * iconHeight; //set y to row of bitmap based on direction
                 Rect src = new Rect(srcX, srcY, srcX + iconWidth, srcY + iconHeight);  //defines the rectangle inside of heroBmp to displayed

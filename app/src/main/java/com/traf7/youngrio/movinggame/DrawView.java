@@ -8,18 +8,27 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.media.AudioAttributes;
+import android.media.AudioManager;
+import android.media.SoundPool;
+import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
 
-    public class DrawView extends View {
+public class DrawView extends View {
         Paint paint = new Paint();
         Sprite user_sprite = new Sprite( "bluejeans");
         Sprite badSprite = new Sprite( "chibi1");
         Sprite foodSprite = new Sprite( "health");
 //        Sprite foodSprite;
+        private static final int MAX_STREAMS = 100;
+        private int soundIdPunch;
+
+        private boolean soundPoolLoaded;
+         private SoundPool soundPool;
 
         public DrawView(Context context, @Nullable AttributeSet attrs)
         {
@@ -34,10 +43,10 @@ import androidx.annotation.Nullable;
             foodSprite = generateSprite( "health");
             badSprite = generateSprite( "chibi1");
             badSprite.setColor(Color.RED);
-            badSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.chibi1));
+            badSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.dude));
             user_sprite.grow(100);
             user_sprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.bluejeans));
-            foodSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.health));
+            foodSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.chibi2));
 //            badSprite.grow(1000);
         }
 
@@ -54,19 +63,21 @@ import androidx.annotation.Nullable;
             badSprite.update(canvas);
             if(RectF.intersects(user_sprite, foodSprite)){
                 foodSprite=generateSprite( "health");
-                foodSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.health));
+                foodSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.chibi2));
                 user_sprite.grow(10);
             }
             if(RectF.intersects(user_sprite, badSprite)){
-                badSprite=generateSprite( "chibi1");
+                badSprite=generateSprite( "bully");
 //                badSprite.setColor(Color.RED);
-                badSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.chibi1));
+                playSoundPunch();
+                badSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.dude));
                 user_sprite.grow(-5);
             }
             if(RectF.intersects(foodSprite, badSprite)){
-                foodSprite.grow((int)(-foodSprite.width()*.1));//shrink food
-                badSprite=generateSprite( "chibi1");//recreate badSprite
-                badSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.chibi1));
+                //foodSprite.grow((int)(-foodSprite.width()*.1));//shrink food
+                playSoundPunch();
+                badSprite=generateSprite( "bully");//recreate badSprite
+                badSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.dude));
 
 //                badSprite.setColor(Color.GREEN);
             }
@@ -79,16 +90,16 @@ import androidx.annotation.Nullable;
         private Sprite generateSprite(){
             float x = (float)(Math.random()*(getWidth()-.1*getWidth()));
             float y = (float)(Math.random()*(getHeight()-.1*getHeight()));
-            int dX = (int)(Math.random()*11-5);
-            int dY = (int)(Math.random()*11-5);
+            int dX = (int)(Math.random()*6 + 1);
+            int dY = (int)(Math.random()*6 + 1);
             return new Sprite(x,y,x+.1f*getWidth(),y+.1f*getWidth(),dX,dY,Color.MAGENTA );
         }
 
         private Sprite generateSprite( String string ) {
             float x = (float) (Math.random() * (getWidth() - .1 * getWidth()));
             float y = (float) (Math.random() * (getHeight() - .1 * getHeight()));
-            int dX = (int) (Math.random() * 11 - 5);
-            int dY = (int) (Math.random() * 11 - 5);
+            int dX = (int) (Math.random() * 6 + 1);
+            int dY = (int) (Math.random() * 6 + 1);
             return new Sprite(x, y, x + .1f * getWidth(), y + .1f * getWidth(), dX, dY, Color.MAGENTA, string );
         }
 
@@ -96,12 +107,58 @@ import androidx.annotation.Nullable;
         public boolean onTouchEvent(MotionEvent event) {
             if(event.getAction()==MotionEvent.ACTION_DOWN){
                 if(badSprite.contains(event.getX(),event.getY())){
-                    badSprite=generateSprite( "chibi1");
+                    badSprite=generateSprite( "bully");
                     badSprite.setColor(Color.GREEN);
                 }
             }
             return true;
         }
+
+
+        private void initSoundPool() {
+            //With Android API 21
+            if (Build.VERSION.SDK_INT >= 21) {
+                AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_GAME)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                        .build();
+
+                SoundPool.Builder builder = new SoundPool.Builder();
+                builder.setAudioAttributes(audioAttributes).setMaxStreams(MAX_STREAMS);
+
+                this.soundPool = builder.build();
+            } else {
+                //SoundPool(int maxStreams, int streamType, int srcQuality)
+                this.soundPool = new SoundPool(MAX_STREAMS, AudioManager.STREAM_MUSIC, 0);
+            }
+
+            //When SoundPool load complete
+            this.soundPool.setOnLoadCompleteListener(new SoundPool.OnLoadCompleteListener() {
+                @Override
+                public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+                    soundPoolLoaded = true;
+
+
+                }
+            });
+
+
+            //Load the sound punch.wav into SoundPool
+            this.soundIdPunch = this.soundPool.load(this.getContext(), R.raw.punch, 1);
+        }
+
+        public void playSoundPunch() {
+            if (this.soundPoolLoaded) {
+                float leftVolume = 0.8f;
+                float rightVolume = 0.8f;
+
+                //Play sound explosion.wav
+                int streamId = this.soundPool.play(this.soundIdPunch, leftVolume, rightVolume, 1, 0, 1f);
+                System.out.println( streamId );
+            }
+        }
     }
+
+
 
 
