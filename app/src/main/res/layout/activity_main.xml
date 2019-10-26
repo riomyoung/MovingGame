@@ -9,24 +9,19 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Avoid the bully! The angel will heal you!"
+        android:text="You have 3 lives. Avoid the bully! The angel will heal you!"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:id="@+id/welcomeText"/>
-    <RatingBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/welcomeText"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        android:id="@+id/ratingBar"/>
+
     <view
+        android:id="@+id/drawView"
+        class="com.traf7.youngrio.movinggame.DrawView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        class="com.traf7.youngrio.movinggame.DrawView"
-        app:layout_constraintTop_toBottomOf="@+id/ratingBar"
-        app:layout_constraintBottom_toTopOf="@+id/leftButton"
-        android:id="@+id/drawView"/>
+        app:layout_constraintTop_toBottomOf="@id/welcomeText"
+        app:layout_constraintBottom_toTopOf="@+id/upButton" />
+
 
 <!--    <CheckBox-->
 <!--        android:layout_width="wrap_content"-->
@@ -75,9 +70,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Up"
-        app:layout_constraintBottom_toBottomOf="@+id/downButton"
+        app:layout_constraintBottom_toTopOf="@+id/downButton"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         android:onClick="moveUp"
         android:id="@+id/upButton"/>
     <Button

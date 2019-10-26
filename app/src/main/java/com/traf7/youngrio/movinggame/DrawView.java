@@ -15,24 +15,37 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class DrawView extends View {
         Paint paint = new Paint();
         Sprite user_sprite = new Sprite( "bluejeans");
-        Sprite badSprite = new Sprite( "chibi1");
-        Sprite foodSprite = new Sprite( "health");
+        Sprite badSprite = new Sprite( "bully");
+        Sprite foodSprite = new Sprite( "angel");
 //        Sprite foodSprite;
         private static final int MAX_STREAMS = 100;
         private int soundIdPunch;
+        private int soundIdHeal;
+        private int health = 3;
+
+        public boolean gameEnd = false;
 
         private boolean soundPoolLoaded;
-         private SoundPool soundPool;
+        private SoundPool soundPool;
+
+
 
         public DrawView(Context context, @Nullable AttributeSet attrs)
         {
             super(context, attrs);
+            this.initSoundPool();
+
+
         }
 
         @Override
@@ -40,13 +53,13 @@ public class DrawView extends View {
         {
             super.onLayout(changed, left, top, right, bottom);
             //note, at this point, getWidth() and getHeight() will have access the the dimensions
-            foodSprite = generateSprite( "health");
-            badSprite = generateSprite( "chibi1");
+            foodSprite = generateSprite( "angel");
+            badSprite = generateSprite( "bully");
             badSprite.setColor(Color.RED);
-            badSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.dude));
+            badSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.bully));
             user_sprite.grow(100);
             user_sprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.bluejeans));
-            foodSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.chibi2));
+            foodSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.angel));
 //            badSprite.grow(1000);
         }
 
@@ -62,22 +75,39 @@ public class DrawView extends View {
             foodSprite.update(canvas);
             badSprite.update(canvas);
             if(RectF.intersects(user_sprite, foodSprite)){
-                foodSprite=generateSprite( "health");
-                foodSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.chibi2));
-                user_sprite.grow(10);
+                foodSprite=generateSprite( "angel");
+                foodSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.angel));
+                playSoundHeal();
+                health++;
+//                Context context = MainActivity.getApplicationContext();
+//                CharSequence text = "Hello toast!";
+//                int duration = Toast.LENGTH_SHORT;
+//
+//                Toast toast = Toast.makeText(context, text, duration);
+//                toast.show();
             }
             if(RectF.intersects(user_sprite, badSprite)){
-                badSprite=generateSprite( "bully");
+                //badSprite=generateSprite( "bully");
+                user_sprite = generateSprite( "bluejeans");
 //                badSprite.setColor(Color.RED);
                 playSoundPunch();
-                badSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.dude));
-                user_sprite.grow(-5);
+                System.out.println( "PUNCH");
+                user_sprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.bluejeans));
+                health--;
+                if (health < 0 )
+                {
+                    gameEnd = true;
+                }
+                //user_sprite.grow(-5);
             }
             if(RectF.intersects(foodSprite, badSprite)){
                 //foodSprite.grow((int)(-foodSprite.width()*.1));//shrink food
                 playSoundPunch();
-                badSprite=generateSprite( "bully");//recreate badSprite
-                badSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.dude));
+                System.out.println( "PUNCH");
+                foodSprite = generateSprite( "angel");
+                foodSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.angel));
+//                badSprite=generateSprite( "bully");//recreate badSprite
+//                badSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.bully));
 
 //                badSprite.setColor(Color.GREEN);
             }
@@ -145,6 +175,7 @@ public class DrawView extends View {
 
             //Load the sound punch.wav into SoundPool
             this.soundIdPunch = this.soundPool.load(this.getContext(), R.raw.punch, 1);
+            this.soundIdHeal = this.soundPool.load(this.getContext(), R.raw.heal, 1);
         }
 
         public void playSoundPunch() {
@@ -157,7 +188,28 @@ public class DrawView extends View {
                 System.out.println( streamId );
             }
         }
+
+    public void playSoundHeal() {
+        if (this.soundPoolLoaded) {
+            float leftVolume = 0.8f;
+            float rightVolume = 0.8f;
+
+            //Play sound explosion.wav
+            int streamId = this.soundPool.play(this.soundIdHeal, leftVolume, rightVolume, 1, 0, 1f);
+            System.out.println( streamId );
+        }
     }
+
+    public void cancel()
+    {
+        badSprite.setdX(0);
+        badSprite.setdY(0);
+        foodSprite.setdX(0);
+        foodSprite.setdY(0);
+        user_sprite.setdX(0);
+        user_sprite.setdY(0);
+    }
+}
 
 
 

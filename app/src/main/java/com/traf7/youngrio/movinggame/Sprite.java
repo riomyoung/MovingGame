@@ -10,7 +10,7 @@ import android.graphics.RectF;
 class Sprite extends RectF {
     private static final int BLUEJEANS_COLUMNS = 4;
     private static final int BLUEJEANS_ROWS = 4;
-    private static final int BULLY_COLUMNS = 4;
+    private static final int BULLY_COLUMNS = 3;
     private static final int BULLY_ROWS = 4;
     private static final int HEALTH_COLUMNS = 3;
     private static final int HEALTH_ROWS = 4;
@@ -65,15 +65,20 @@ class Sprite extends RectF {
             dX*=-1; //bounce off left and right boundaries
         }
 
-        if( top + dY > canvas.getHeight())//if next step puts off bottom of screen
+        if ( top + dY < 0 || bottom + dY > canvas.getHeight())//if next step hits boundary
         {
-            offsetTo( left,-height() );//teleport to top of screen
+            dY*=-1; //bounce off left and right boundaries
         }
 
-        if ( bottom + dY < 0 )
-        {
-            offsetTo( left, canvas.getHeight() );
-        }
+//        if( top + dY > canvas.getHeight())//if next step puts off bottom of screen
+//        {
+//            offsetTo( left,-height() );//teleport to top of screen
+//        }
+//
+//        if ( bottom + dY < 0 )
+//        {
+//            offsetTo( left, canvas.getHeight() );
+//        }
 
         offset( dX,dY );//moves dX to the right and dY downwards
 
@@ -91,7 +96,7 @@ class Sprite extends RectF {
                     currentFrame = ++currentFrame % BLUEJEANS_COLUMNS;//cycles current image with boundary proteciton
                     animationDelay = 20;//arbitrary delay before cycling to next image
                 }
-                if ( picture.equals( "health" ))
+                if ( picture.equals( "angel" ))
                 {
                     currentFrame = ++currentFrame % HEALTH_COLUMNS;//cycles current image with boundary proteciton
                     animationDelay = 20;//arbitrary delay before cycling to next image
@@ -122,7 +127,7 @@ class Sprite extends RectF {
             }
             if ( picture.equals( "bully") )
             {
-                System.out.println( "CHIBI1 PICTURE");
+                System.out.println( "ANGEL PICTURE");
                 iconWidth = bitmap.getWidth() / BULLY_COLUMNS;//calculate width of 1 image
                 iconHeight = bitmap.getHeight() / BULLY_ROWS; //calculate height of 1 image
                 int srcX = currentFrame * iconWidth;       //set x of source rectangle inside of bitmap based on current frame
@@ -130,9 +135,9 @@ class Sprite extends RectF {
                 Rect src = new Rect(srcX, srcY, srcX + iconWidth, srcY + iconHeight);  //defines the rectangle inside of heroBmp to displayed
                 canvas.drawBitmap(bitmap,src, this,null); //draw an image
             }
-            if ( picture.equals( "health") )
+            if ( picture.equals( "angel") )
             {
-                System.out.println( "health");
+                System.out.println( "angel");
                 iconWidth = bitmap.getWidth() / HEALTH_COLUMNS;//calculate width of 1 image
                 iconHeight = bitmap.getHeight() / HEALTH_ROWS; //calculate height of 1 image
                 int srcX = currentFrame * iconWidth;       //set x of source rectangle inside of bitmap based on current frame

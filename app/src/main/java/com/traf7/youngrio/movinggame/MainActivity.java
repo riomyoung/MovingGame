@@ -2,19 +2,52 @@ package com.traf7.youngrio.movinggame;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.Toast;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
     DrawView drawView;
+    Timer timer = new Timer();
+    int duration = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        drawView=findViewById(R.id.drawView);
-    }
+        drawView = findViewById(R.id.drawView);
+//        while (drawView.gameEnd != true )
+//        {
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    runOnUiThread( new Runnable()  {
+                        @Override
+                        public void run() {
+                            duration++;
+                            if ( drawView.gameEnd == true )
+                            {
+                                timer.cancel();
+                                drawView.cancel();
+                                Context context = getApplicationContext();
+                                CharSequence text = "You lasted " + duration + " seconds!";
+                                int duration = Toast.LENGTH_SHORT;
+
+                                Toast toast = Toast.makeText(context, text, duration);
+                                toast.show();
+                            }
+                        }
+                    });
+                }
+            }, 1000, 1000);
+        }
+//    }
 
     public void moveLeft(View view)
     {
