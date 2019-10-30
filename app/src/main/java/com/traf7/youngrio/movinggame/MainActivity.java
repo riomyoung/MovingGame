@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
                                 drawView.cancel();
                                 Context context = getApplicationContext();
                                 CharSequence text = "You lasted " + duration + " seconds!";
-                                int duration = Toast.LENGTH_SHORT;
+                                int duration = Toast.LENGTH_LONG;
 
                                 Toast toast = Toast.makeText(context, text, duration);
                                 toast.show();

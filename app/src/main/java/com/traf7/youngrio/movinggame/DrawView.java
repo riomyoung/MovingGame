@@ -27,6 +27,7 @@ public class DrawView extends View {
         Sprite user_sprite = new Sprite( "bluejeans");
         Sprite badSprite = new Sprite( "bully");
         Sprite foodSprite = new Sprite( "angel");
+
 //        Sprite foodSprite;
         private static final int MAX_STREAMS = 100;
         private int soundIdPunch;
@@ -60,6 +61,7 @@ public class DrawView extends View {
             user_sprite.grow(100);
             user_sprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.bluejeans));
             foodSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.angel));
+
 //            badSprite.grow(1000);
         }
 
@@ -78,7 +80,10 @@ public class DrawView extends View {
                 foodSprite=generateSprite( "angel");
                 foodSprite.setBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.angel));
                 playSoundHeal();
-                health++;
+                if ( health < 3 )
+                {
+                    health++;
+                }
 //                Context context = MainActivity.getApplicationContext();
 //                CharSequence text = "Hello toast!";
 //                int duration = Toast.LENGTH_SHORT;
